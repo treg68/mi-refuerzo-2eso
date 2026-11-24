@@ -358,8 +358,19 @@ function numberValue(s){const t=String(s||'').trim().replace(/−/g,'-').replace
 function near(a,b){return Math.abs(a-b)<Math.max(1e-7,Math.abs(b)*1e-7)}
 function mastery(topic){const old=state.attempts.filter(a=>a.topic===topic&&a.mode==='practice');let level=3,pass=0,fail=0;for(const a of old){if(a.independent&&a.level===level){pass++;fail=0;if(pass>=3&&level<5){level++;pass=0}}else if(!a.correct&&a.level===level){fail++;pass=0;if(fail>=2&&level>1){level--;fail=0}}}return level}
 function currentLevel(topic){return Math.max(1,Math.min(5,mastery(topic)))}
+// La práctica debe ofrecer reto: niveles 3–5 son la propuesta habitual.
+// Dos fallos recientes bajan temporalmente la exigencia, sin devolver al
+// alumnado de refuerzo a una batería casi exclusiva de ejercicios básicos.
+function practiceLevel(topic){
+ const base=currentLevel(topic), recent=state.attempts.filter(a=>a.topic===topic&&a.mode==='practice').slice(-4);
+ const fails=recent.filter(a=>!a.correct).length;
+ if(fails>=2){const r=Math.random();return r<.60?3:r<.90?4:5}
+ const weights=base>=5?[.10,.30,.60]:base===4?[.15,.40,.45]:base===3?[.25,.40,.35]:[.20,.45,.30,.05];
+ const levels=base>=3?[3,4,5]:[2,3,4,5];
+ let r=Math.random(),i=0;for(;i<weights.length-1&&r>=weights[i];i++)r-=weights[i];return levels[i];
+}
 function setTheme(level){const x=LEVELS[level-1]||LEVELS[2];document.documentElement.style.setProperty('--accent',x.color);document.documentElement.style.setProperty('--wash',x.wash);document.documentElement.style.setProperty('--accentDark','#283d54');}
-function newQuestion(topic=state.topic){state.topic=topic;const lv=currentLevel(topic);state.active={...safeQuestion(topic,lv),tries:0,hintShown:false,feedback:null,created:stamp()};save()}
+function newQuestion(topic=state.topic){state.topic=topic;const lv=practiceLevel(topic);state.active={...safeQuestion(topic,lv),tries:0,hintShown:false,feedback:null,created:stamp()};save()}
 function start(topic){newQuestion(topic);view='practica';render()}
 function record(correct,entered,skipped=false){const a=state.active;if(!a||a.feedback)return;const independent=correct&&a.tries===1&&!a.hintShown;const attempt={topic:a.topic,level:a.level,mode:'practice',time:stamp(),independent,correct,tries:a.tries,hints:a.hintShown?1:0,skipped,stem:a.stem,answered:String(entered||''),expected:fmt(a.answer)};state.attempts.push(attempt);a.feedback={correct,independent,skipped};save();render()}
 function respond(){const a=state.active;if(!a||a.feedback)return;const entered=$('#response')?.value||'';const n=numberValue(entered);if(n===null){$('#notice').textContent='Escribe un número entero o una fracción (por ejemplo, 3/4).' ;return}a.tries++;const correct=near(n,a.answer);if(correct){record(true,entered)}else if(a.tries>=2){record(false,entered)}else{a.lastWrong=entered;save();render()}}
