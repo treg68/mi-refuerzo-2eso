@@ -1,0 +1,190 @@
+{
+  "version": "v7",
+  "note": "Catálogo de fuentes y clasificación por unidad; NO banco de PDF extraídos ni material reutilizable automáticamente",
+  "sources": [
+    {
+      "id": "navarra2025",
+      "title": "Evaluación Navarra 2025-26",
+      "url": "https://www.educacion.navarra.es/web/dpto/educaci%C3%B3n-secundaria-curso-2025-2026",
+      "license": "Pendiente de revisión documental"
+    },
+    {
+      "id": "navarrahist",
+      "title": "Diagnósticas Navarra cursos anteriores",
+      "url": "https://www.educacion.navarra.es/web/dpto/evaluacion-y-calidad/evaluacion/evaluacion-externa/evaluacion-de-navarra/educacion-secundaria-cursos-anteriores",
+      "license": "Pendiente de revisión documental"
+    },
+    {
+      "id": "intergranada",
+      "title": "Intergranada 2 ESO",
+      "url": "https://selectividad.intergranada.com/mates2eso.html",
+      "license": "Varía según autor/editorial"
+    }
+  ],
+  "units": [
+    {
+      "name": "Unidad 1 · Números enteros",
+      "topics": [
+        "enteros",
+        "potencias"
+      ],
+      "sourceRefs": [
+        "navarra2025",
+        "navarrahist",
+        "intergranada"
+      ],
+      "extractedExercises": 0
+    },
+    {
+      "name": "Unidad 2 · Fracciones y números decimales",
+      "topics": [
+        "fracciones",
+        "decimales",
+        "notacion"
+      ],
+      "sourceRefs": [
+        "navarra2025",
+        "navarrahist",
+        "intergranada"
+      ],
+      "extractedExercises": 0
+    },
+    {
+      "name": "Unidad 3 · Lenguaje algebraico",
+      "topics": [
+        "lenguaje",
+        "monomios",
+        "polinomios"
+      ],
+      "sourceRefs": [
+        "navarra2025",
+        "navarrahist",
+        "intergranada"
+      ],
+      "extractedExercises": 0
+    },
+    {
+      "name": "Unidad 4 · Ecuaciones",
+      "topics": [
+        "eq_basicas",
+        "eq_parentesis",
+        "eq_denominadores",
+        "eq_mixtas",
+        "eq_segundo"
+      ],
+      "sourceRefs": [
+        "navarra2025",
+        "navarrahist",
+        "intergranada"
+      ],
+      "extractedExercises": 0
+    },
+    {
+      "name": "Unidad 5 · Sistemas de ecuaciones",
+      "topics": [
+        "sistemas"
+      ],
+      "sourceRefs": [
+        "navarra2025",
+        "navarrahist",
+        "intergranada"
+      ],
+      "extractedExercises": 0
+    },
+    {
+      "name": "Unidad 6 · Proporcionalidad numérica",
+      "topics": [
+        "prop_directa",
+        "prop_inversa",
+        "prop_compuesta",
+        "porcentajes",
+        "porc_encadenados",
+        "reparto_directo",
+        "reparto_inverso",
+        "proporcionalidad"
+      ],
+      "sourceRefs": [
+        "navarra2025",
+        "navarrahist",
+        "intergranada"
+      ],
+      "extractedExercises": 0
+    },
+    {
+      "name": "Unidad 7 · Funciones y gráficas",
+      "topics": [
+        "coordenadas",
+        "funciones"
+      ],
+      "sourceRefs": [
+        "navarra2025",
+        "navarrahist",
+        "intergranada"
+      ],
+      "extractedExercises": 0
+    },
+    {
+      "name": "Unidad 8 · Funciones lineales",
+      "topics": [
+        "lineales"
+      ],
+      "sourceRefs": [
+        "navarra2025",
+        "navarrahist",
+        "intergranada"
+      ],
+      "extractedExercises": 0
+    },
+    {
+      "name": "Unidad 9 · Estadística y probabilidad",
+      "topics": [
+        "estadistica",
+        "datos"
+      ],
+      "sourceRefs": [
+        "navarra2025",
+        "navarrahist",
+        "intergranada"
+      ],
+      "extractedExercises": 0
+    },
+    {
+      "name": "Unidad 10 · Figuras planas y semejanza",
+      "topics": [
+        "geometria",
+        "pitagoras",
+        "semejanza"
+      ],
+      "sourceRefs": [
+        "navarra2025",
+        "navarrahist",
+        "intergranada"
+      ],
+      "extractedExercises": 0
+    },
+    {
+      "name": "Unidad 11 · Geometría del espacio: áreas",
+      "topics": [
+        "superficies"
+      ],
+      "sourceRefs": [
+        "navarra2025",
+        "navarrahist",
+        "intergranada"
+      ],
+      "extractedExercises": 0
+    },
+    {
+      "name": "Unidad 12 · Volumen de cuerpos geométricos",
+      "topics": [
+        "volumen"
+      ],
+      "sourceRefs": [
+        "navarra2025",
+        "navarrahist",
+        "intergranada"
+      ],
+      "extractedExercises": 0
+    }
+  ]
+}

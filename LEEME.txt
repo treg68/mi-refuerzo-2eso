@@ -1,0 +1,11 @@
+MI REFUERZO MATEMÁTICAS 2.º ESO · V8 CORREGIDA SIN NÚMEROS DECIMALES
+
+Incluye 12 unidades, niveles 1–5, práctica, 10 preguntas tipo test y 3 abiertas por examen, banco de 22 problemas originales, informes familiares y envío voluntario preparado para Netlify Forms.
+
+RESTRICCIÓN: no se muestran números decimales en enunciados, respuestas, opciones, pistas ni soluciones. Se usan enteros, fracciones y expresiones exactas. Las plantillas que proponían π=3,14 y los problemas abiertos con números decimales quedan excluidos de la generación.
+
+ATENCIÓN: no modifica automáticamente ninguna web. Descomprimir el ZIP y subir SOLAMENTE la carpeta al proyecto Netlify DE 2.º ESO, previa copia JSON del progreso y verificación de que es el proyecto correcto. El enlace de 3.º ESO es otro proyecto.
+
+No se afirma cobertura exhaustiva de Intergranada ni de diagnósticas; el banco de 22 problemas es original. Probar recepción de Netlify Forms antes de uso real con alumnado.
+
+© Ángel Gil Gómez
