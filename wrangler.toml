@@ -5,4 +5,4 @@ compatibility_date = "2026-11-24"
 [[d1_databases]]
 binding = "DB"
 database_name = "mi-refuerzo-2eso-control"
-database_id = "REEMPLAZAR_CON_DATABASE_ID"
+database_id = "0888a618-3e9b-4de8-b795-49beb7760312"
