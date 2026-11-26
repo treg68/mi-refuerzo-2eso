@@ -639,26 +639,22 @@ function examGenerate(topicIds){
 // Un pequeño conversor de expresiones aritméticas a MathML. No usa HTML de entradas del alumnado.
 const mathEsc=t=>esc(t);
 function expressionMath(raw){
- const src=String(raw).replaceAll('−','-').replaceAll('×','·').replaceAll('÷','/');let i=0;
- const nodes=[];const token=()=>{const c=src[i];if(!c)return '';
-  if(c==='('){i++;const inside=[];while(i<src.length&&src[i]!==')')inside.push(token());if(src[i]===')')i++;return `<mrow><mo>(</mo>${inside.join('')}<mo>)</mo></mrow>`;}
-  if(c==='√'){i++;let arg;if(src[i]==='('){arg=token();}else{let q='';while(i<src.length&&/[0-9]/.test(src[i]))q+=src[i++];arg=`<mn>${mathEsc(q||'?')}</mn>`;}return `<msqrt>${arg}</msqrt>`;}
-  if(/\s/.test(c)){i++;return '<mspace width="0.20em"/>';}
-  if(/[0-9]/.test(c)){let n='';while(i<src.length&&/[0-9,.]/.test(src[i]))n+=src[i++];return `<mn>${mathEsc(n)}</mn>`;}
-  if(/[a-zA-Z]/.test(c)){i++;return `<mi>${mathEsc(c)}</mi>`;}
-  i++;return `<mo>${mathEsc(c)}</mo>`;
+ const src=String(raw).replaceAll('−','-').replaceAll('×','·');let i=0;
+ const sup={'²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁰':'0','¹':'1'};
+ const skip=()=>{while(/\s/.test(src[i]||''))i++};
+ const atom=()=>{skip();const c=src[i];if(!c)return '<mrow/>';let out;
+  if(c==='('){i++;const inside=sequence(')');if(src[i]===')')i++;out=`<mrow><mo>(</mo>${inside}<mo>)</mo></mrow>`;}
+  else if(c==='√'){i++;out=`<msqrt>${atom()}</msqrt>`;}
+  else if(/[0-9]/.test(c)){let n='';while(/[0-9,.]/.test(src[i]||''))n+=src[i++];out=`<mn>${mathEsc(n)}</mn>`;}
+  else if(/[a-zA-Z]/.test(c)){i++;out=`<mi>${mathEsc(c)}</mi>`;}
+  else{i++;out=`<mo>${mathEsc(c)}</mo>`;}
+  skip();let e='';if(src[i]==='^'){i++;while(/[0-9]/.test(src[i]||''))e+=src[i++];}else if(sup[src[i]])e=sup[src[i++]];if(e)out=`<msup>${out}<mn>${e}</mn></msup>`;return out;
  };
- // Extract a fraction numerator from the just-built tokens. For example (x-3)/4 or x/3.
- while(i<src.length){
-  if(src[i]==='/'&&nodes.length){i++;while(src[i]===' ')i++;const prev=nodes.pop();let den='';if(src[i]==='('){den=token();}else{while(i<src.length&&/[0-9a-zA-Z]/.test(src[i]))den+=token();}
-   nodes.push(`<mfrac>${prev}<mrow>${den||'<mn>1</mn>'}</mrow></mfrac>`);continue;}
-  if(src[i]==='²'||src[i]==='³'||src[i]==='^'){const mark=src[i++];let e=mark==='²'?'2':mark==='³'?'3':'';if(!e)while(/[0-9]/.test(src[i]||''))e+=src[i++];const prev=nodes.pop()||'<mi>x</mi>';nodes.push(`<msup>${prev}<mn>${mathEsc(e||'2')}</mn></msup>`);continue;}
-  nodes.push(token());
- }
- return `<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>${nodes.join('')}</mrow></math>`;
+ const sequence=(stop)=>{const nodes=[];while(i<src.length&&src[i]!==stop){skip();if(src[i]===stop)break;if(src[i]==='÷'){nodes.push('<mo>÷</mo>');i++;continue;}if(src[i]==='/'){i++;const prev=nodes.pop()||'<mrow/>';const den=atom();nodes.push(`<mfrac>${prev}${den}</mfrac>`);continue;}nodes.push(atom());}return nodes.join('')};
+ return `<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>${sequence()}</mrow></math>`;
 }
 function prettyStem(t){const txt=String(t);const idx=txt.indexOf('Resuelve: ');if(idx>=0){const before=txt.slice(0,idx+10),f=txt.slice(idx+10);return `${esc(before)} <span class="mathline">${expressionMath(f)}</span>`;}
- const calc=txt.indexOf('Calcula: ');if(calc>=0){return esc(txt.slice(0,calc+9))+` <span class="mathline">${expressionMath(txt.slice(calc+9))}</span>`;}
+ const cm=txt.match(/^(.*?\bCalcula)(?::)?\s+(.+)$/);if(cm&&/^[0-9(−\-√x]/.test(cm[2]))return esc(`${cm[1]} `)+`<span class="mathline">${expressionMath(cm[2])}</span>`;
  const matched=txt.match(/(\([^()]{1,25}\)\/\d+|\b\d+\/\d+|\bx\/\d+)/);
  // Fraction-bearing problem text keeps accessible prose; replace short clear fraction groups only.
  if(matched){let pos=0,out='';for(const m of txt.matchAll(/\([^()]{1,35}\)\/\d+|\b\d+\/\d+|\bx\/\d+/g)){out+=esc(txt.slice(pos,m.index))+expressionMath(m[0]);pos=m.index+m[0].length;}return out+esc(txt.slice(pos));}
