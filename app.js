@@ -308,7 +308,56 @@ function makeNew(topic,level){
  throw Error('Subtema sin generador: '+topic);
 }
 
-function make(topic,level){if(EXTRA_TOPICS.some(t=>t.id===topic))return makeNew(topic,level);if(PROP_IDS.includes(topic))return makeProportion(topic,level);if(ALGEBRA_IDS.includes(topic))return makeAlgebra(topic,level);let a,b,c,d,x,y,v;
+
+// R6: familias originales, sin documentos editoriales ni banco privado.
+const ORIGINAL_FAMILIES=[
+ ['polinomios',3,'suma'],['polinomios',4,'producto'],['polinomios',4,'cuadrado'],
+ ['polinomios',5,'diferencia'],['polinomios',4,'division'],['polinomios',5,'area'],
+ ['eq_basicas',3,'lineal'],['eq_denominadores',4,'fracciones'],
+ ['eq_parentesis',4,'consecutivos'],['eq_segundo',4,'raices'],
+ ['eq_segundo',5,'rectangulo'],['eq_mixtas',5,'reparto'],
+ ['sistemas',3,'suma-diferencia'],['sistemas',4,'reduccion'],
+ ['sistemas',4,'granja'],['sistemas',5,'entradas'],
+ ['sistemas',5,'perimetro'],['sistemas',5,'bonos'],
+ ['prop_directa',3,'cuadernos'],['prop_inversa',4,'trayecto'],
+ ['prop_inversa',4,'personas'],['prop_compuesta',5,'produccion'],
+ ['porcentajes',4,'rebaja'],['reparto_inverso',5,'inversos']
+];
+function originalExercise(index){
+ const [topic,level,kind]=ORIGINAL_FAMILIES[index];
+ const a=randint(2,7),b=randint(2,8),c=randint(2,6),x=randint(2,10);
+ let stem,answer,solution,hint,verification;
+ switch(kind){
+ case 'suma': stem=`Reduce (${a}x² − ${b}x + ${c}) + (${b}x² + ${c}x − ${a}). Escribe el coeficiente de x.`;answer=c-b;solution=`Se suman los coeficientes del mismo grado: (${a+b})x² + (${c-b})x + (${c-a}).`;hint='Conserva el signo de cada término.';break;
+ case 'producto':stem=`Desarrolla (${a}x − ${b})(x² + ${c}x + 1). ¿Cuál es el coeficiente de x²?`;answer=a*c-b;solution=`Los términos de grado dos proceden de ${a}x·${c}x y de −${b}·x²: ${a*c}−${b}=${answer}.`;hint='Busca todos los productos que dan grado dos.';break;
+ case 'cuadrado':stem=`Desarrolla (${a}x + ${b})². ¿Cuál es el coeficiente de x?`;answer=2*a*b;solution=`El término central es 2·${a}x·${b}=${answer}x.`;hint='El cuadrado de una suma incluye el doble producto.';break;
+ case 'diferencia':stem=`Factoriza ${a*a}x² − ${b*b} y calcula el valor de la expresión para x=${x}.`;answer=a*a*x*x-b*b;solution=`(${a}x−${b})(${a}x+${b}); al sustituir x=${x}, el producto vale ${answer}.`;hint='Usa la diferencia de cuadrados y después sustituye.';break;
+ case 'division':stem=`Divide (${a*c}x⁴ − ${b*c}x³ + ${c*c}x²) entre ${c}x². ¿Cuál es el coeficiente de x en el cociente?`;answer=-b;solution=`El cociente es ${a}x² − ${b}x + ${c}. El coeficiente pedido es −${b}.`;hint='Divide coeficientes y resta exponentes.';break;
+ case 'area':stem=`Una pieza rectangular tiene área (${a*c}x³ + ${b*c}x² + ${c*c}x) cm² y ancho ${c}x cm, con x positivo. Halla su longitud y calcula cuántos centímetros mide cuando x=${x}.`;answer=a*x*x+b*x+c;solution=`Longitud=área/ancho=${a}x²+${b}x+${c}. Para x=${x}: ${answer} cm.`;hint='Simplifica la división antes de sustituir.';break;
+ case 'lineal':stem=`Resuelve ${a+1}x − ${b} = x + ${a*x-b}.`;answer=x;solution=`Restando x y sumando ${b}: ${a}x=${a*x}; x=${x}.`;hint='Realiza la misma operación en los dos miembros.';break;
+ case 'fracciones':stem=`Resuelve (x − ${x-a})/${a} + (x + ${b-x})/${b} = 2.`;answer=x;solution=`Multiplicando por ${a*b}: ${b}(x−(${x-a}))+${a}(x+(${b-x}))=${2*a*b}. Se obtiene x=${x}.`;hint='Elimina denominadores y comprueba en ambos sumandos.';break;
+ case 'consecutivos':stem=`La suma de tres números enteros consecutivos es ${3*x+3}. ¿Cuál es el mayor?`;answer=x+2;solution=`n+(n+1)+(n+2)=${3*x+3}; n=${x}. El mayor es ${answer}.`;hint='Representa los tres números a partir del menor.';break;
+ case 'raices':stem=`Resuelve x² − ${a+b}x + ${a*b} = 0. Escribe la mayor de sus soluciones.`;answer=Math.max(a,b);solution=`(x−${a})(x−${b})=0. Las soluciones son ${a} y ${b}; la mayor es ${answer}.`;hint='Busca dos números con la suma y producto indicados.';break;
+ case 'rectangulo':stem=`El largo de una zona rectangular supera al ancho en ${b} m. El área es ${x*(x+b)} m². ¿Cuánto mide el ancho?`;answer=x;solution=`n(n+${b})=${x*(x+b)}. Las raíces son ${x} y −${x+b}; solo la positiva es una longitud.`;hint='Plantea una ecuación de segundo grado y descarta la longitud negativa.';break;
+ case 'reparto':stem=`Una caja contiene ${a*x+b} fichas. Tras reservar ${b}, se reparten las restantes entre ${a} equipos por igual. ¿Cuántas recibe cada equipo?`;answer=x;solution=`${a}n+${b}=${a*x+b}; n=${x}.`;hint='Resta las fichas reservadas antes de dividir.';break;
+ case 'suma-diferencia':stem=`Resuelve el sistema x+y=${a+b}, x−y=${a-b}. Escribe el valor de x.`;answer=a;solution=`Sumando las ecuaciones: 2x=${2*a}; x=${a}, y=${b}.`;hint='Suma miembro a miembro.';break;
+ case 'reduccion':stem=`Resuelve ${a}x+${b}y=${a*x+b*c}, ${a+1}x−${b}y=${(a+1)*x-b*c}. Escribe x.`;answer=x;solution=`Sumando: ${2*a+1}x=${(2*a+1)*x}; x=${x}. Después y=${c}.`;hint='Los términos en y se anulan al sumar.';break;
+ case 'granja':stem=`En un recinto hay ${a+b} animales entre gallinas y conejos. En total tienen ${2*a+4*b} patas. ¿Cuántos conejos hay?`;answer=b;solution=`g+r=${a+b}; 2g+4r=${2*a+4*b}. Restando el doble de la primera: 2r=${2*b}; r=${b}.`;hint='Cuenta animales y patas por separado.';break;
+ case 'entradas':stem=`En una actividad, dos entradas de adulto y tres juveniles cuestan ${2*(a+b)+3*b} €. Tres de adulto y dos juveniles cuestan ${3*(a+b)+2*b} €. ¿Qué precio tiene una entrada de adulto?`;answer=a+b;solution=`2A+3J=${2*(a+b)+3*b}; 3A+2J=${3*(a+b)+2*b}. Por reducción, A=${a+b} €, J=${b} €.`;hint='Define los dos precios; no los confundas con las cantidades.';break;
+ case 'perimetro':stem=`Un jardín rectangular tiene perímetro ${2*(2*x+b)} m. Su largo supera al ancho en ${b} m. ¿Cuánto mide el largo?`;answer=x+b;solution=`L+A=${2*x+b}; L−A=${b}. Sumando: 2L=${2*(x+b)}; L=${answer} m.`;hint='El semiperímetro es la suma de largo y ancho.';break;
+ case 'bonos':stem=`Una asociación compra ${a+b} bonos: unos de ${c} € y otros de ${c+2} €. Paga ${a*c+b*(c+2)} €. ¿Cuántos bonos del precio más alto ha comprado?`;answer=b;solution=`u+v=${a+b}; ${c}u+${c+2}v=${a*c+b*(c+2)}. Restando ${c} veces la primera: 2v=${2*b}; v=${b}.`;hint='El precio mayor no implica que haya más bonos de ese tipo.';break;
+ case 'cuadernos':stem=`Un lote de ${a} cuadernos iguales cuesta ${a*c} €. ¿Cuánto cuesta otro lote de ${b} cuadernos al mismo precio por unidad?`;answer=b*c;solution=`Precio unitario=${a*c}/${a}=${c} €. El otro lote cuesta ${b}·${c}=${answer} €.`;hint='Compara precios por unidad.';break;
+ case 'trayecto':{const t1=2*a,t2=a,distance=t1*b*10;stem=`Un vehículo recorre ${distance} km en ${t1} horas, a velocidad constante y sin paradas. Quiere completar el mismo trayecto en ${t2} horas, también a velocidad constante y sin paradas. ¿A qué velocidad debe circular, en km/h?`;answer=distance/t2;solution=`Velocidad=distancia/tiempo=${distance}/${t2}=${answer} km/h.`;hint='Identifica la distancia y el tiempo del segundo viaje.';verification={distance,t1,t2,v1:distance/t1,v2:answer,requested:'speed'};break;}
+ case 'personas':{const units1=a,units2=2*a,time1=2*b,time2=b;stem=`${units1} personas completan una tarea en ${time1} días. ¿Cuántos días necesitarán ${units2} personas con el mismo rendimiento individual, trabajando juntas desde el principio?`;answer=time2;solution=`Trabajo=${units1}·${time1} personas·día; tiempo=${units1*time1}/${units2}=${time2} días.`;hint='Mantén constante el producto de personas por días.';verification={units1,units2,time1,time2,requested:'time'};break;}
+ case 'produccion':stem=`${a} máquinas iguales producen ${a*b*c} piezas en ${b} horas. ¿Cuántas producirán ${a+2} máquinas en ${b+1} horas al mismo ritmo?`;answer=(a+2)*(b+1)*c;solution=`Rendimiento=${a*b*c}/(${a}·${b})=${c} piezas por máquina y hora. Producción=${a+2}·${b+1}·${c}=${answer}.`;hint='Calcula primero el rendimiento por máquina y hora.';break;
+ case 'rebaja':{const price=20*a,percent=5*b;stem=`Un artículo cuesta ${price} €. Se rebaja un ${percent} %. ¿Cuál es su precio final en euros?`;answer=price*(100-percent)/100;solution=`Se paga ${100-percent}/100 de ${price}: ${fmt(answer)} €.`;hint='Distingue el descuento del precio que se paga.';break;}
+ case 'inversos':stem=`Se reparten ${31*x} puntos inversamente a 2, 3 y 5. ¿Cuántos puntos recibe la primera persona?`;answer=15*x;solution=`Los pesos son 1/2:1/3:1/5=15:10:6. Suman 31 partes; cada parte vale ${x}. La primera recibe ${answer}.`;hint='Invierte las razones antes de repartir.';break;
+ }
+ return {...q(topic,level,stem,answer,solution,hint),family:'original-r6-'+kind,patternId:'R6-'+index,parameters:{a,b,c,x},...(verification?{verification}:{})};
+}
+function chooseOriginal(topic,level){const ids=ORIGINAL_FAMILIES.map((f,i)=>f[0]===topic&&f[1]===level?i:-1).filter(i=>i>=0);return ids.length?originalExercise(pick(ids)):null;}
+
+function make(topic,level){const fresh=Math.random()<.6?chooseOriginal(topic,level):null;if(fresh)return fresh;if(EXTRA_TOPICS.some(t=>t.id===topic))return makeNew(topic,level);if(PROP_IDS.includes(topic))return makeProportion(topic,level);if(ALGEBRA_IDS.includes(topic))return makeAlgebra(topic,level);let a,b,c,d,x,y,v;
  switch(topic){
  case 'enteros':switch(level){
  case 1:a=randint(-18,-4);b=randint(5,20);return q(topic,level,`Calcula: ${a} + ${b}`,a+b,`Suma cantidades con signo distinto y conserva el signo de la de mayor valor absoluto. Resultado: ${a+b}.`,'Compara los valores absolutos.');
